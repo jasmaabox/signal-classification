@@ -1,20 +1,25 @@
-% Read data
-ds = datastore('test.csv', ...
-               'TreatAsMissing','NA');
-T = readall(ds)
+% Create datastore
+adsTrain = audioDatastore(fullfile("data/train"), ...
+    "IncludeSubfolders", true, ...
+    "LabelSource", "foldernames", ...
+    "FileExtensions", ".wav");
+
+disp("Reading data...")
 
 inputSize = 65536;
-X = zeros(length(T.File), inputSize);
-Y = zeros(length(T.File), 1);
-for i=1:length(T.File)
-    fname = char(T.File(i));
+X = zeros(length(adsTrain.Files), inputSize);
+Y = zeros(length(adsTrain.Files), 1);
+for i=1:length(adsTrain.Files)
+    fname = char(adsTrain.Files(i));
     [data, fs] = audioread(fname);
     dataFFT = fft(data, inputSize);
     input = transpose(abs(dataFFT(:,1)));
     
     X(i,:) = input;
-    Y(i,:) = T.Class(i);
+    Y(i,:) = adsTrain.Labels(i);
 end
+
+disp("Start training...")
 
 % Fit to multiclass ECOC
 model = fitcecoc(X, Y);

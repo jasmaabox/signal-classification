@@ -65,10 +65,6 @@ def main():
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'wav',
                 'preferredquality': '192',
-            }, {
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'wav',
-                'preferredquality': '192',
             }],
         }
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
