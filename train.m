@@ -6,24 +6,59 @@ adsTrain = audioDatastore(fullfile("data/train"), ...
 
 disp("Reading data...")
 
-inputSize = 65536;
-X = zeros(length(adsTrain.Files), inputSize);
-Y = zeros(length(adsTrain.Files), 1);
-for i=1:length(adsTrain.Files)
-    fname = char(adsTrain.Files(i));
-    [data, fs] = audioread(fname);
-    dataFFT = fft(data, inputSize);
-    input = transpose(abs(dataFFT(:,1)));
-    
-    X(i,:) = input;
-    Y(i,:) = adsTrain.Labels(i);
+% Extract features
+[~,adsInfo] = read(adsTrain);
+fs = adsInfo.SampleRate;
+win = hamming(0.03*fs,"periodic");
+overlapLength = round(0.75*numel(win));
+extractor = audioFeatureExtractor('Window',win, ...
+        'OverlapLength',overlapLength, ...
+        'SampleRate',fs, ...
+        'SpectralDescriptorInput','melSpectrum', ...
+        ...
+        'gtcc',true, ...
+        'gtccDelta',true, ...
+        'gtccDeltaDelta',true, ...
+        'spectralSlope',true, ...
+        'spectralFlux',true, ...
+        'spectralCentroid',true, ...
+        'spectralEntropy',true, ...
+        'pitch',true, ...
+        'harmonicRatio',true);
+
+T = tall(adsTrain);
+featureVectorsTall = cellfun( @(x)extractFeatures(x,extractor),T, "UniformOutput",false);
+featureVectors = gather(featureVectorsTall)
+
+% LSTM
+numClasses = numel(unique(adsTrain.Labels));
+layers = [ ...
+    sequenceInputLayer(45)
+    bilstmLayer(50,"OutputMode","sequence")
+    dropoutLayer(0.1)
+    bilstmLayer(50,"OutputMode","last")
+    fullyConnectedLayer(numClasses)
+    softmaxLayer
+    classificationLayer];
+
+miniBatchSize = 128;
+options = trainingOptions("adam", ...
+    "MaxEpochs",4, ...
+    "MiniBatchSize",miniBatchSize, ...
+    "Plots","training-progress", ...
+    "Verbose",false, ...
+    "Shuffle","every-epoch", ...
+    "LearnRateSchedule","piecewise", ...
+    "LearnRateDropFactor",0.1, ...
+    "LearnRateDropPeriod",2);
+
+net = trainNetwork(featureVectors,adsTrain.Labels,layers,options);
+
+% === FUNCTIONS ===
+
+% Extract feature vector
+function features = extractFeatures(x, aFE)
+    x = mean(x, 2); % Collapse stereo?
+    features = extract(aFE, x);
+    features = transpose(features);
 end
-
-% Fit to multiclass ECOC
-disp("Start training...")
-model = fitcecoc(X, Y);
-compactModel = compact(model);
-disp("Done!")
-
-disp("Saving model...")
-save("models/classifier", "compactModel")
