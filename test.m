@@ -1,35 +1,29 @@
 % Create datastore
-% Read data
 ds = datastore('test.csv', ...
                'TreatAsMissing','NA');
 
-adsTest = readall(ds);
-                
-disp("Reading data...")
+testTable = readall(ds);
+adsTest = testTable.Files;
+testY = categorical(testTable.Labels);
 
-inputSize = 65536;
-X = zeros(length(adsTest.Files), inputSize);
-Y = zeros(length(adsTest.Files), 1);
-for i=1:length(adsTest.Files)
-    fname = char(adsTest.Files(i));
-    [data, fs] = audioread(fname);
-    dataFFT = fft(data, inputSize);
-    input = transpose(abs(dataFFT(:,1)));
-    
-    X(i,:) = input;
-    Y(i,:) = adsTest.Labels(i);
-end
+% Extract features
+disp("Extracting data...")
+T = tall(adsTest);
+audioArr = cellfun( @(x)path2audio(x),T, "UniformOutput",false);
+run("makeExtractor.m");
+featureVectorsTall = cellfun( @(x)extractFeatures(x, extractor),audioArr, "UniformOutput",false);
+featureVectors = gather(featureVectorsTall);
 
-% Load ecoc
+% Load in LSTM
 disp("Loading model...")
-load("models/classifier.mat")
+load("models/net");
 
-% Predict and count
-predY = predict(compactModel, X);
+% Classify
+predY = classify(net, featureVectors);
 
 correct = 0;
-for i=1:length(Y)
-    if Y(i) == predY(i)
+for i=1:length(testY)
+    if testY(i) == predY(i)
         correct = correct + 1;
     end
 end
@@ -37,3 +31,10 @@ end
 disp("===")
 disp("Number correct:")
 disp(correct)
+
+
+
+% Convert path to audio
+function audioIn = path2audio(x)
+    audioIn = audioread(char(x));
+end
