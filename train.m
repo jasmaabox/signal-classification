@@ -19,10 +19,11 @@ for i=1:length(adsTrain.Files)
     Y(i,:) = adsTrain.Labels(i);
 end
 
-disp("Start training...")
-
 % Fit to multiclass ECOC
+disp("Start training...")
 model = fitcecoc(X, Y);
+compactModel = compact(model);
+disp("Done!")
 
-% Predict
-predict(model, X(1,:))
+disp("Saving model...")
+save("models/classifier", "compactModel")
