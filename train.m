@@ -1,9 +1,9 @@
 % Create datastore
-adsTrain = audioDatastore(fullfile("data/train"), ...
+adsTrain = audioDatastore(fullfile("data/dummyTrain"), ...
     "IncludeSubfolders", true, ...
     "LabelSource", "foldernames", ...
     "FileExtensions", ".wav");
-trainY = adsTrain.Labels;
+labels = adsTrain.Labels;
 
 % Extract data
 disp("Extracting data...")
@@ -14,31 +14,46 @@ featureVectors = gather(featureVectorsTall);
 
 % Save training data
 disp("Saving data...")
-save("data/trainData", "featureVectors", "trainY");
-%load("data/trainData", "featureVectors", "trainY");
+save("data/trainData", "featureVectors", "labels");
+load("data/trainData", "featureVectors", "labels");
+
+m = size(featureVectors, 1);
+P = 0.7;
+idx = randperm(m);
+trainX = featureVectors(idx(1:round(P*m)),:); 
+validateX = featureVectors(idx(round(P*m)+1:end),:);
+trainY = labels(idx(1:round(P*m)),:); 
+validateY = labels(idx(round(P*m)+1:end),:);
 
 % Define and train LSTM
-numClasses = numel(unique(trainY));
+numClasses = numel(unique(labels));
 layers = [ ...
-    sequenceInputLayer(45)
+    sequenceInputLayer(91)
     bilstmLayer(50,"OutputMode","sequence")
     dropoutLayer(0.1)
     bilstmLayer(50,"OutputMode","last")
+    fullyConnectedLayer(128)
+    reluLayer
+    fullyConnectedLayer(64)
+    reluLayer
+    fullyConnectedLayer(32)
+    reluLayer
     fullyConnectedLayer(numClasses)
     softmaxLayer
     classificationLayer];
 
-miniBatchSize = 128;
 options = trainingOptions("adam", ...
-    "MaxEpochs",100, ...
-    "MiniBatchSize",miniBatchSize, ...
+    "MaxEpochs",10, ...
+    "MiniBatchSize",32, ...
     "Plots","training-progress", ...
     "Verbose",false, ...
     "Shuffle","every-epoch", ...
     "LearnRateSchedule","piecewise", ...
     "LearnRateDropFactor",0.1, ...
-    "LearnRateDropPeriod",2);
+    "LearnRateDropPeriod",2, ...
+    'ValidationData',{validateX,validateY}, ...
+    'ValidationFrequency',5);
 
 disp("Training network...")
-net = trainNetwork(featureVectors,trainY,layers,options);
+net = trainNetwork(trainX,trainY,layers,options);
 save("models/net", "net");

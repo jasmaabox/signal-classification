@@ -19,7 +19,7 @@ disp("Loading model...")
 load("models/net");
 
 % Classify
-predY = classify(net, featureVectors);
+[predY,scores] = classify(net, featureVectors);
 
 correct = 0;
 for i=1:length(testY)
