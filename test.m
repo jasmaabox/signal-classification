@@ -32,6 +32,7 @@ disp("===")
 disp("Number correct:")
 disp(correct)
 
+disp(scores)
 
 
 % Convert path to audio
