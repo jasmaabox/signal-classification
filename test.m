@@ -1,4 +1,4 @@
-% Create datastore
+%% Create datastore
 % Read data
 ds = datastore('test.csv', ...
                'TreatAsMissing','NA');
@@ -20,19 +20,14 @@ for i=1:length(adsTest.Files)
     Y(i,:) = adsTest.Labels(i);
 end
 
-% Load ecoc
+%% Load ecoc
 disp("Loading model...")
 load("models/classifier.mat")
 
-% Predict and count
+%% Predict and count
 predY = predict(compactModel, X);
 
-correct = 0;
-for i=1:length(Y)
-    if Y(i) == predY(i)
-        correct = correct + 1;
-    end
-end
+correct = sum(Y==predY);    % Fancy logical arrays
 
 disp("===")
 disp("Number correct:")
