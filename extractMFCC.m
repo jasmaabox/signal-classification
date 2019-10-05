@@ -6,5 +6,5 @@ function img = extractMFCC(x)
     img = normalize(mfcc);
     img = uint8(floor(img * 255));
     img = ind2rgb(img, jet);
-    img = imresize(img,[227 227]);
+    img = imresize(img,[299 299]);
 end
