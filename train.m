@@ -26,10 +26,8 @@ validateY = labels(idx(round(P*m)+1:end),:);
 
 trainM = length(trainX);
 validateM = length(validateX);
-
 trainX = reshape(cell2mat(trainX), [trainM, 227, 227, 3]);
 validateX = reshape(cell2mat(validateX), [validateM, 227, 227, 3]);
-
 trainX = permute(trainX, [2, 3, 4, 1]);
 validateX = permute(validateX, [2, 3, 4, 1]);
 
@@ -68,7 +66,8 @@ options = trainingOptions("adam", ...
     "LearnRateDropFactor",0.1, ...
     "LearnRateDropPeriod",2, ...
     'ValidationData',{validateX,validateY}, ...
-    'ValidationFrequency',5);
+    'ValidationFrequency',5, ...
+    'CheckpointPath','checkpoints');
 
 disp("Training network...")
 net = trainNetwork(trainX, trainY,layers,options);

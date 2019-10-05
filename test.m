@@ -10,16 +10,19 @@ testY = categorical(testTable.Labels);
 disp("Extracting data...")
 T = tall(adsTest);
 audioArr = cellfun( @(x)path2audio(x),T, "UniformOutput",false);
-run("makeExtractor.m");
-featureVectorsTall = cellfun( @(x)extractFeatures(x, extractor),audioArr, "UniformOutput",false);
-featureVectors = gather(featureVectorsTall);
+mfccImgsTall = cellfun( @(x)extractMFCC(x),audioArr, "UniformOutput",false);
+testX = gather(mfccImgsTall);
+
+m = length(testX);
+testX = reshape(cell2mat(testX), [m, 227, 227, 3]);
+testX = permute(testX, [2, 3, 4, 1]);
 
 % Load in LSTM
 disp("Loading model...")
 load("models/net");
 
 % Classify
-[predY,scores] = classify(net, featureVectors);
+[predY,scores] = classify(net, testX);
 
 correct = 0;
 for i=1:length(testY)
