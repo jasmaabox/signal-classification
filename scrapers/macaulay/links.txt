@@ -1,0 +1,10 @@
+https://download.ams.birds.cornell.edu/api/v1/asset/179959811
+https://taxonomy.api.macaulaylibrary.org/v1/taxonomy?key=PUB4334626458&q=bald&locale=en_US
+https://search.macaulaylibrary.org/catalog.json?searchField=species&q=Bald+Eagle+-+Haliaeetus+leucocephalus&taxonCode=baleag&hotspotCode=&regionCode=&customRegionCode=&userId=&_mediaType=on&mediaType=a&species=&region=&hotspot=&customRegion=&mr=M1TO12&bmo=1&emo=12&yr=YALL&by=1900&ey=2019&user=&view=Gallery&sort=upload_date_desc&_req=on&subId=&catId=&_spec=on&specId=&collection=&collectionCatalogId=&dsu=-1&initialCursorMark=AoJwy%2FDYr%2BsCKTE2NDM5NDYyMQ%3D%3D&count=50&_=1570502932686
+
+https://search.macaulaylibrary.org/catalog.json?searchField=species&q=Bald+Eagle+-+Haliaeetus+leucocephalus&taxonCode=baleag&hotspotCode=&regionCode=&customRegionCode=&userId=&_mediaType=on&mediaType=a&species=&region=&hotspot=&customRegion=&mr=M1TO12&bmo=1&emo=12&yr=YALL&by=1900&ey=2019&user=&view=Gallery&sort=upload_date_desc&_req=on&subId=&catId=&_spec=on&specId=&collection=&collectionCatalogId=&dsu=-1&initialCursorMark=AoJwy%2FDYr%2BsCKTE2NDM5NDYyMQ%3D%3D&count=100&_=1570502932686
+
+https://search.macaulaylibrary.org/catalog.json?q=Bald+Eagle+-+Haliaeetus+leucocephalus&taxonCode=baleag&hotspotCode=&regionCode=&customRegionCode=&userId=&_mediaType=on&mediaType=a&species=&region=&hotspot=&customRegion=&mr=M1TO12&bmo=1&emo=12&yr=YALL&by=1900&ey=2019&user=&view=Gallery&sort=upload_date_desc&_req=on&subId=&catId=&_spec=on&specId=&collection=&collectionCatalogId=&dsu=-1&count=100&_=1570502932686
+https://search.macaulaylibrary.org/catalog.json?q=Bald+Eagle+-+Haliaeetus+leucocephalus&taxonCode=baleag&count=100&mediaType=a&&initialCursorMark=AoJwkY2S%2B%2BQCKTEwOTM3MTM1MQ%3D%3D
+
+https://search.macaulaylibrary.org/catalog.json?q=Bald+Eagle+-+Haliaeetus+leucocephalus&taxonCode=baleag&count=100&mediaType=a&&initialCursorMark=
