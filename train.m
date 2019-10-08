@@ -1,19 +1,21 @@
 % Create datastore
-adsTrain = audioDatastore(fullfile("data/dummyTrain"), ...
+ds = audioDatastore(fullfile("data/dummyTrain"), ...
     "IncludeSubfolders", true, ...
-    "LabelSource", "foldernames", ...
-    "FileExtensions", ".wav");
-labels = adsTrain.Labels;
+    "LabelSource", "foldernames");
+
+adsTrain = ds.Files;
+labels = ds.Labels;
 
 % Extract data
 disp("Extracting data...")
 T = tall(adsTrain);
-mfccImgsTall = cellfun( @(x)extractMFCC(x),T, "UniformOutput",false);
+audioArr = cellfun( @(x)path2signal(x),T, "UniformOutput",false);
+mfccImgsTall = cellfun( @(x)signal2MFCC(x),audioArr, "UniformOutput",false);
 mfccImgs = gather(mfccImgsTall);
 
 % Save training data
 disp("Saving data...")
-save("data/trainData", "mfccImgs", "labels");
+save("data/trainData", "mfccImgs", "labels", '-v7.3');
 load("data/trainData", "mfccImgs", "labels");
 
 m = length(mfccImgs);

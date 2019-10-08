@@ -9,8 +9,8 @@ testY = categorical(testTable.Labels);
 % Extract features
 disp("Extracting data...")
 T = tall(adsTest);
-audioArr = cellfun( @(x)path2audio(x),T, "UniformOutput",false);
-mfccImgsTall = cellfun( @(x)extractMFCC(x),audioArr, "UniformOutput",false);
+audioArr = cellfun( @(x)path2signal(x),T, "UniformOutput",false);
+mfccImgsTall = cellfun( @(x)signal2MFCC(x),audioArr, "UniformOutput",false);
 mfccImgs = gather(mfccImgsTall);
 
 m = length(mfccImgs);
@@ -25,9 +25,3 @@ load("models/net");
 [predY,scores] = classify(net, testX);
 
 plotconfusion(testY, predY)
-
-
-% Convert path to audio
-function audioIn = path2audio(x)
-    audioIn = audioread(char(x));
-end
