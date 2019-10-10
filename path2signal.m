@@ -3,5 +3,7 @@ function x = path2signal(name)
     [P,Q] = rat(48000/Fs);                    % Resample to 48000
     x = resample(audioIn, P, Q);
     x = mean(x, 2);                           % Convert to mono
-    x = x/sqrt(sum(abs(x .^2)) / length(x));  % RMS normalize
+    x = lowpass(x, 150, 48000);               % Lowpass filter
+    %x = x * sqrt(length(x) / sum(x .^2));  % RMS normalize
+    x = x / max(abs(x));                      % Peak normalize
 end
