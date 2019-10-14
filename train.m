@@ -21,7 +21,7 @@ save("data/trainData", "mfccImgs", "labels", '-v7.3');
 load("data/trainData", "mfccImgs", "labels");
 
 m = length(mfccImgs);
-P = 1;%0.7;
+P = 0.7;
 idx = randperm(m);
 trainX = mfccImgs(idx(1:round(P*m)),:); 
 validateX = mfccImgs(idx(round(P*m)+1:end),:);

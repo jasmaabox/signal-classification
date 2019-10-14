@@ -15,10 +15,13 @@ mfccImgs = gather(mfccImgsTall);
 
 m = length(mfccImgs);
 
+testX = mfccImgs;
 testX = cell2mat(testX);
 testX = permute(testX, [3, 2, 1]);
 testX = reshape(testX, [3, 299, 299, m]);
 testX = permute(testX, [4, 3, 2, 1]);
+
+testX = permute(testX, [2, 3, 4, 1]);
 
 % Load in model
 disp("Loading model...")
