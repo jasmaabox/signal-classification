@@ -14,10 +14,13 @@ mfccImgsTall = cellfun( @(x)signal2MFCC(x),audioArr, "UniformOutput",false);
 mfccImgs = gather(mfccImgsTall);
 
 m = length(mfccImgs);
-testX = reshape(cell2mat(mfccImgs), [m, 299, 299, 3]);
-testX = permute(testX, [2, 3, 4, 1]);
 
-% Load in LSTM
+testX = cell2mat(testX);
+testX = permute(testX, [3, 2, 1]);
+testX = reshape(testX, [3, 299, 299, m]);
+testX = permute(testX, [4, 3, 2, 1]);
+
+% Load in model
 disp("Loading model...")
 load("models/net");
 
@@ -25,3 +28,4 @@ load("models/net");
 [predY,scores] = classify(net, testX);
 
 plotconfusion(testY, predY)
+set(findobj(gca,'type','text'),'fontsize',10) 

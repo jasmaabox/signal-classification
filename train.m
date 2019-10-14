@@ -1,3 +1,4 @@
+%{
 % Create datastore
 ds = audioDatastore(fullfile("data/dummyTrain"), ...
     "IncludeSubfolders", true, ...
@@ -16,10 +17,11 @@ mfccImgs = gather(mfccImgsTall);
 % Save training data
 disp("Saving data...")
 save("data/trainData", "mfccImgs", "labels", '-v7.3');
+%}
 load("data/trainData", "mfccImgs", "labels");
 
 m = length(mfccImgs);
-P = 0.7;
+P = 1;%0.7;
 idx = randperm(m);
 trainX = mfccImgs(idx(1:round(P*m)),:); 
 validateX = mfccImgs(idx(round(P*m)+1:end),:);
@@ -28,8 +30,17 @@ validateY = labels(idx(round(P*m)+1:end),:);
 
 trainM = length(trainX);
 validateM = length(validateX);
-trainX = reshape(cell2mat(trainX), [trainM, 299, 299, 3]);
-validateX = reshape(cell2mat(validateX), [validateM, 299, 299, 3]);
+
+trainX = cell2mat(trainX);
+trainX = permute(trainX, [3, 2, 1]);
+trainX = reshape(trainX, [3, 299, 299, trainM]);
+trainX = permute(trainX, [4, 3, 2, 1]);
+
+validateX = cell2mat(validateX);
+validateX = permute(validateX, [3, 2, 1]);
+validateX = reshape(validateX, [3, 299, 299, validateM]);
+validateX = permute(validateX, [4, 3, 2, 1]);
+
 trainX = permute(trainX, [2, 3, 4, 1]);
 validateX = permute(validateX, [2, 3, 4, 1]);
 
@@ -44,7 +55,7 @@ newClassLayer = classificationLayer('Name','new_classoutput');
 lgraph = replaceLayer(lgraph,'ClassificationLayer_predictions',newClassLayer);
 
 options = trainingOptions("adam", ...
-    "MaxEpochs",100, ...
+    "MaxEpochs",10, ...
     "MiniBatchSize",32, ...
     "Plots","training-progress", ...
     "Verbose",false, ...
@@ -52,10 +63,11 @@ options = trainingOptions("adam", ...
     "LearnRateSchedule","piecewise", ...
     "LearnRateDropFactor",0.1, ...
     "LearnRateDropPeriod",2, ...
-    'ValidationData',{validateX,validateY}, ...
-    'ValidationFrequency',5, ...
-    'CheckpointPath','checkpoints');
+    "ValidationData",{validateX,validateY}, ...
+    "ValidationFrequency",5, ...
+    "CheckpointPath","checkpoints");
 
 disp("Training network...")
 net = trainNetwork(trainX, trainY,lgraph,options);
 save("models/net", "net");
+disp("Done!")
