@@ -11,5 +11,7 @@ Repo for 2019 NG signal classification challenge
 
 # Structure
   - `data`: `train` and `test` data
-  - `data_scraper`: Scrapes Youtube for audio samples following AudioSet dataset
+  - `scraper`
+    - `google_audioset`: Scrapes Youtube for audio samples following AudioSet dataset
+    - `macaulay`: Scrapes Macaulay Library for animal sounds
   - `models`: Trained classifiers
