@@ -1,34 +1,34 @@
-%% Create datastore
-% Read data
+% Create datastore
 ds = datastore('test.csv', ...
                'TreatAsMissing','NA');
 
-adsTest = readall(ds);
-                
-disp("Reading data...")
+testTable = readall(ds);
+adsTest = testTable.Files;
+testY = categorical(testTable.Labels);
 
-inputSize = 65536;
-X = zeros(length(adsTest.Files), inputSize);
-Y = zeros(length(adsTest.Files), 1);
-for i=1:length(adsTest.Files)
-    fname = char(adsTest.Files(i));
-    [data, fs] = audioread(fname);
-    dataFFT = fft(data, inputSize);
-    input = transpose(abs(dataFFT(:,1)));
-    
-    X(i,:) = input;
-    Y(i,:) = adsTest.Labels(i);
-end
+% Extract features
+disp("Extracting data...")
+T = tall(adsTest);
+audioArr = cellfun( @(x)path2signal(x),T, "UniformOutput",false);
+mfccImgsTall = cellfun( @(x)signal2MFCC(x),audioArr, "UniformOutput",false);
+mfccImgs = gather(mfccImgsTall);
 
-%% Load ecoc
+m = length(mfccImgs);
+
+testX = mfccImgs;
+testX = cell2mat(testX);
+testX = permute(testX, [3, 2, 1]);
+testX = reshape(testX, [3, 299, 299, m]);
+testX = permute(testX, [4, 3, 2, 1]);
+
+testX = permute(testX, [2, 3, 4, 1]);
+
+% Load in model
 disp("Loading model...")
-load("models/classifier.mat")
+load("models/net");
 
-%% Predict and count
-predY = predict(compactModel, X);
+% Classify
+[predY,scores] = classify(net, testX);
 
-correct = sum(Y==predY);    % Fancy logical arrays
-
-disp("===")
-disp("Number correct:")
-disp(correct)
+plotconfusion(testY, predY)
+set(findobj(gca,'type','text'),'fontsize',5) 
