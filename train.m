@@ -1,6 +1,5 @@
-%{
 % Create datastore
-ds = audioDatastore(fullfile("data/dummyTrain"), ...
+ds = audioDatastore(fullfile("data/train"), ...
     "IncludeSubfolders", true, ...
     "LabelSource", "foldernames");
 
@@ -17,7 +16,6 @@ mfccImgs = gather(mfccImgsTall);
 % Save training data
 disp("Saving data...")
 save("data/trainData", "mfccImgs", "labels", '-v7.3');
-%}
 load("data/trainData", "mfccImgs", "labels");
 
 m = length(mfccImgs);

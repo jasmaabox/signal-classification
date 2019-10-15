@@ -1,5 +1,5 @@
 % Create datastore
-ds = datastore('dummyTest.csv', ...
+ds = datastore('test.csv', ...
                'TreatAsMissing','NA');
 
 testTable = readall(ds);
@@ -31,4 +31,4 @@ load("models/net");
 [predY,scores] = classify(net, testX);
 
 plotconfusion(testY, predY)
-set(findobj(gca,'type','text'),'fontsize',10) 
+set(findobj(gca,'type','text'),'fontsize',5) 

@@ -32,5 +32,5 @@ octave-workspace
 
 # ignore data for now
 /data
-/models
 /checkpoints
+/models
