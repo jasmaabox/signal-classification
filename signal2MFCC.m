@@ -1,3 +1,4 @@
+% Convert signal to MFCC spectogram image
 function img = signal2MFCC(x)
     mfcc = melSpectrogram(x, 48000);
     img = normalize(mfcc);

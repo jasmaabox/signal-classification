@@ -1,3 +1,4 @@
+% Convert path to signal
 function x = path2signal(name)
     [audioIn,Fs] = audioread(char(name));
     [P,Q] = rat(48000/Fs);                    % Resample to 48000

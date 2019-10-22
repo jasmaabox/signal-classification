@@ -1,16 +1,9 @@
-% Test model
+% Single file testing
 
-% Create datastore
-ds = datastore('test.csv', ...
-               'TreatAsMissing','NA');
+fname = input("Enter file path as string: ");
 
-testTable = readall(ds);
-adsTest = testTable.Files;
-testY = categorical(testTable.Labels);
-
-% Extract features
 disp("Extracting data...")
-T = tall(adsTest);
+T = tall({fname});
 audioArr = cellfun( @(x)path2signal(x),T, "UniformOutput",false);
 mfccImgsTall = cellfun( @(x)signal2MFCC(x),audioArr, "UniformOutput",false);
 mfccImgs = gather(mfccImgsTall);
@@ -32,5 +25,8 @@ load("models/net");
 % Classify
 [predY,scores] = classify(net, testX);
 
-plotconfusion(testY, predY)
-set(findobj(gca,'type','text'),'fontsize',5) 
+disp("===")
+disp("Class: ")
+disp(predY)
+disp("Accuracy: ")
+disp(max(scores))

@@ -8,4 +8,4 @@ disp("Extracting data...")
 signal = path2signal(ds.Files(42));
 %plot(signal)
 mfccImg = signal2MFCC(signal);
-%image(mfccImg)
+image(mfccImg)

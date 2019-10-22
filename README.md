@@ -8,6 +8,9 @@ Repo for 2019 NG signal classification challenge
 	
 	# Test
 	test.m
+	
+	# Test single sound file
+	identifySound.m
 
 # Structure
   - `data`: `train` and `test` data
